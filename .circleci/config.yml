@@ -1,9 +1,29 @@
 version: 2.1
 
+# https://circleci.com/orbs/registry/orb/circleci/maven
 orbs:
-  maven: circleci/maven@0.0.12
+  maven: circleci/maven@1.0.1
+
+# Define the jobs we want to run for this project
+# https://hub.docker.com/r/circleci/openjdk/tags?page=1&name=11-jdk
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - checkout
+      - run: echo "this is the build job"
+  test:
+    docker:
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - checkout
+      - run: echo "this is the test job"
 
 workflows:
+  build_only:
+    jobs:
+      - build
   maven_test:
     jobs:
       - maven/test # checkout, build, test, and upload test results
