@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_wpS_gKITEe2K5bvmoHPpWQ" name="common">
+  <eAnnotations xmi:id="_xBAU4qITEe2K5bvmoHPpWQ" source="http://ns.yatta.de/umllab">
+    <contents xmi:type="ecore:EAnnotation" xmi:id="_xBAU46ITEe2K5bvmoHPpWQ" source="codegen">
+      <details xmi:id="_xBAU5KITEe2K5bvmoHPpWQ" key="codeGenerator" value="com.yattasolutions.ecore.ui.codeGenerator"/>
+    </contents>
+    <contents xmi:type="ecore:EAnnotation" xmi:id="_xFsAkKITEe2K5bvmoHPpWQ" source="genmodel">
+      <details xmi:id="_xFsAkaITEe2K5bvmoHPpWQ" key="href" value="platform:/resource/common/common.genmodel"/>
+    </contents>
+  </eAnnotations>
+  <profileApplication xmi:id="_xBAU4KITEe2K5bvmoHPpWQ">
+    <eAnnotations xmi:id="_xBAU4aITEe2K5bvmoHPpWQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="pathmap://UML_PROFILES/Ecore.profile.uml#_z1OFcHjqEdy8S4Cr8Rc_NA"/>
+    </eAnnotations>
+    <appliedProfile href="pathmap://UML_PROFILES/Ecore.profile.uml#_0"/>
+  </profileApplication>
+</uml:Model>
