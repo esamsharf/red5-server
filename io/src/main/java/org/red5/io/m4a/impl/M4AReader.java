@@ -186,6 +186,7 @@ public class M4AReader implements IoConstants, ITagReader {
                 log.debug("moov children: {}", moov.getBoxes().size());
                 MP4Reader.dumpBox(moov);
             }
+
             // get the movie header
             MovieHeaderBox mvhd = moov.getMovieHeaderBox();
             // get the timescale and duration
