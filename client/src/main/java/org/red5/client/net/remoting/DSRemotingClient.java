@@ -42,7 +42,17 @@ import org.slf4j.LoggerFactory;
  */
 public class DSRemotingClient extends RemotingClient {
 
-    protected static Logger log = LoggerFactory.getLogger(DSRemotingClient.class);
+    private static Logger log = LoggerFactory.getLogger(DSRemotingClient.class);
+
+    private static final int DEFAULT_TIMEOUT = 10000;
+
+    private static final String DEFAULT_DS_ID = "nil";
+
+    private static final String DEFAULT_DS_URL = "http://localhost:8080/messagebroker/amf";
+
+    private static final String DEFAULT_DS_DESTINATION = "my-destination";
+
+    private static final String DEFAULT_DS_OPERATION = "my-operation";
 
     /** The datasource id (assigned by the server). DsId */
     private String dataSourceId = "nil";
