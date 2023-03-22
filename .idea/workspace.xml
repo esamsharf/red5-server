@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="266ca0cd-b366-4d5e-b93a-f7f508642760" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/org/red5/client/net/remoting/DSRemotingClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/org/red5/client/net/remoting/DSRemotingClient.java" afterDir="false" />
-    </list>
+    <list default="true" id="266ca0cd-b366-4d5e-b93a-f7f508642760" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -61,11 +58,22 @@
       <updated>1678265527630</updated>
       <workItem from="1678265528757" duration="148000" />
       <workItem from="1678629166245" duration="3328000" />
-      <workItem from="1679471168935" duration="852000" />
+      <workItem from="1679471168935" duration="1191000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
