@@ -65,10 +65,6 @@ import org.red5.io.mp4.impl.MP4Reader;
 import org.red5.io.utils.HexDump;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.red5.io.m4a.impl.FileHeaderReader;
-import org.red5.io.m4a.impl.BoxReader;
-import org.red5.io.m4a.impl.AudioSampleReader;
-import org.red5.io.m4a.impl.FrameMetadataManager;
 
 /**
  * A Reader is used to read the contents of a M4A file. NOTE: This class is not implemented as threading-safe. The caller should make sure
@@ -77,7 +73,7 @@ import org.red5.io.m4a.impl.FrameMetadataManager;
  * @author The Red5 Project
  * @author Paul Gregoire, (mondain@gmail.com)
  */
-public class M4AReader implements  IoConstants, ITagReader {
+public class M4AReader implements IoConstants, ITagReader {
 
     /**
      * Logger
@@ -89,8 +85,10 @@ public class M4AReader implements  IoConstants, ITagReader {
      */
     private SeekableByteChannel dataSource;
 
-   
-    
+    /**
+     * Provider of boxes
+     */
+    private IsoFile isoFile;
 
     private String audioCodecId = "mp4a";
 
@@ -110,7 +108,7 @@ public class M4AReader implements  IoConstants, ITagReader {
     //default to aac lc
     private int audioCodecType = 1;
 
-   
+    private String formattedDuration;
 
     //samples to chunk mappings
     private List<SampleToChunkBox.Entry> audioSamplesToChunks;
@@ -144,7 +142,6 @@ public class M4AReader implements  IoConstants, ITagReader {
     M4AReader() {
     }
 
-    
     /**
      * Creates M4A reader from file input stream, sets up metadata generation flag.
      *
@@ -177,9 +174,287 @@ public class M4AReader implements  IoConstants, ITagReader {
         }
     }
 
-    
+    /**
+     * This handles the moov atom being at the beginning or end of the file, so the mdat may also be before or after the moov atom.
+     */
+    @Override
+    public void decodeHeader() {
+        try {
+            // we want a moov and an mdat, anything else will throw the invalid file type error
+            MovieBox moov = isoFile.getBoxes(MovieBox.class).get(0);
+            if (log.isDebugEnabled()) {
+                log.debug("moov children: {}", moov.getBoxes().size());
+                MP4Reader.dumpBox(moov);
+            }
+            // get the movie header
+            MovieHeaderBox mvhd = moov.getMovieHeaderBox();
+            // get the timescale and duration
+            timeScale = mvhd.getTimescale();
+            duration = mvhd.getDuration();
+            log.debug("Time scale {} Duration {}", timeScale, duration);
+            double lengthInSeconds = (double) duration / timeScale;
+            log.debug("Seconds {}", lengthInSeconds);
+            // look at the tracks
+            log.debug("Tracks: {}", moov.getTrackCount());
+            List<TrackBox> tracks = moov.getBoxes(TrackBox.class); // trak
+            for (TrackBox trak : tracks) {
+                if (log.isDebugEnabled()) {
+                    log.debug("trak children: {}", trak.getBoxes().size());
+                    MP4Reader.dumpBox(trak);
+                }
+                TrackHeaderBox tkhd = trak.getTrackHeaderBox(); // tkhd
+                log.debug("Track id: {}", tkhd.getTrackId());
+                MediaBox mdia = trak.getMediaBox(); // mdia
+                long scale = 0;
+                if (mdia != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("mdia children: {}", mdia.getBoxes().size());
+                        MP4Reader.dumpBox(mdia);
+                    }
+                    MediaHeaderBox mdhd = mdia.getMediaHeaderBox(); // mdhd
+                    if (mdhd != null) {
+                        log.debug("Media data header atom found");
+                        // this will be for either video or audio depending media info
+                        scale = mdhd.getTimescale();
+                        log.debug("Time scale {}", scale);
+                    }
+                    HandlerBox hdlr = mdia.getHandlerBox(); // hdlr
+                    if (hdlr != null) {
+                        String hdlrType = hdlr.getHandlerType();
+                        if ("soun".equals(hdlrType)) {
+                            if (scale > 0) {
+                                audioTimeScale = scale * 1.0;
+                                log.debug("Audio time scale: {}", audioTimeScale);
+                            }
+                        } else {
+                            log.debug("Unhandled handler type: {}", hdlrType);
+                        }
+                    }
+                    MediaInformationBox minf = mdia.getMediaInformationBox();
+                    if (minf != null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("minf children: {}", minf.getBoxes().size());
+                            MP4Reader.dumpBox(minf);
+                        }
+                        AbstractMediaHeaderBox abs = minf.getMediaHeaderBox();
+                        if (abs instanceof SoundMediaHeaderBox) { // smhd
+                            //SoundMediaHeaderBox smhd = (SoundMediaHeaderBox) abs;
+                            log.debug("Sound header atom found");
+                        } else {
+                            log.debug("Unhandled media header box: {}", abs.getType());
+                        }
+                    }
+                }
+                SampleTableBox stbl = trak.getSampleTableBox(); // mdia/minf/stbl
+                if (stbl != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("stbl children: {}", stbl.getBoxes().size());
+                        MP4Reader.dumpBox(stbl);
+                    }
+                    SampleDescriptionBox stsd = stbl.getSampleDescriptionBox(); // stsd
+                    if (stsd != null) {
+                        //stsd: mp4a, avc1, mp4v
+                        //String type = stsd.getType();
+                        if (log.isDebugEnabled()) {
+                            log.debug("stsd children: {}", stsd.getBoxes().size());
+                            MP4Reader.dumpBox(stsd);
+                        }
+                        SampleEntry entry = stsd.getSampleEntry();
+                        log.debug("Sample entry type: {}", entry.getType());
+                        // determine if audio or video and process from there
+                        if (entry instanceof AudioSampleEntry) {
+                            processAudioBox(stbl, (AudioSampleEntry) entry, scale);
+                        }
+                    }
+                }
+            }
+            //real duration
+            StringBuilder sb = new StringBuilder();
+            double videoTime = ((double) duration / (double) timeScale);
+            log.debug("Video time: {}", videoTime);
+            int minutes = (int) (videoTime / 60);
+            if (minutes > 0) {
+                sb.append(minutes);
+                sb.append('.');
+            }
+            //formatter for seconds / millis
+            NumberFormat df = DecimalFormat.getInstance();
+            df.setMaximumFractionDigits(2);
+            sb.append(df.format((videoTime % 60)));
+            formattedDuration = sb.toString();
+            log.debug("Time: {}", formattedDuration);
 
-  
+            List<MediaDataBox> mdats = isoFile.getBoxes(MediaDataBox.class);
+            if (mdats != null && !mdats.isEmpty()) {
+                log.debug("mdat count: {}", mdats.size());
+            }
+        } catch (Exception e) {
+            log.error("Exception decoding header / atoms", e);
+        }
+    }
+
+    /**
+     * Process the audio information contained in the atoms.
+     *
+     * @param stbl
+     * @param ase
+     *            AudioSampleEntry
+     * @param scale
+     *            timescale
+     */
+    private void processAudioBox(SampleTableBox stbl, AudioSampleEntry ase, long scale) {
+        // get codec
+        String codecName = ase.getType();
+        // set the audio codec here - may be mp4a or...
+        setAudioCodecId(codecName);
+        log.debug("Sample size: {}", ase.getSampleSize());
+        long ats = ase.getSampleRate();
+        // skip invalid audio time scale
+        if (ats > 0) {
+            audioTimeScale = ats * 1.0;
+        }
+        log.debug("Sample rate (audio time scale): {}", audioTimeScale);
+        audioChannels = ase.getChannelCount();
+        log.debug("Channels: {}", audioChannels);
+        if (ase.getBoxes(ESDescriptorBox.class).size() > 0) {
+            // look for esds
+            ESDescriptorBox esds = ase.getBoxes(ESDescriptorBox.class).get(0);
+            if (esds == null) {
+                log.debug("esds not found in default path");
+                // check for decompression param atom
+                AppleWaveBox wave = ase.getBoxes(AppleWaveBox.class).get(0);
+                if (wave != null) {
+                    log.debug("wave atom found");
+                    // wave/esds
+                    esds = wave.getBoxes(ESDescriptorBox.class).get(0);
+                    if (esds == null) {
+                        log.debug("esds not found in wave");
+                        // mp4a/esds
+                        //AC3SpecificBox mp4a = wave.getBoxes(AC3SpecificBox.class).get(0);
+                        //esds = mp4a.getBoxes(ESDescriptorBox.class).get(0);
+                    }
+                }
+            }
+            //mp4a: esds
+            if (esds != null) {
+                // http://stackoverflow.com/questions/3987850/mp4-atom-how-to-discriminate-the-audio-codec-is-it-aac-or-mp3
+                ESDescriptor descriptor = esds.getEsDescriptor();
+                if (descriptor != null) {
+                    DecoderConfigDescriptor configDescriptor = descriptor.getDecoderConfigDescriptor();
+                    AudioSpecificConfig audioInfo = configDescriptor.getAudioSpecificInfo();
+                    if (audioInfo != null) {
+                        audioDecoderBytes = audioInfo.getConfigBytes();
+                        /*
+                         * the first 5 (0-4) bits tell us about the coder used for aacaot/aottype http://wiki.multimedia.cx/index.php?title=MPEG-4_Audio 0 - NULL 1 - AAC Main (a deprecated AAC profile
+                         * from MPEG-2) 2 - AAC LC or backwards compatible HE-AAC 3 - AAC Scalable Sample Rate 4 - AAC LTP (a replacement for AAC Main, rarely used) 5 - HE-AAC explicitly signaled
+                         * (Non-backward compatible) 23 - Low Delay AAC 29 - HE-AACv2 explicitly signaled 32 - MP3on4 Layer 1 33 - MP3on4 Layer 2 34 - MP3on4 Layer 3
+                         */
+                        byte audioCoderType = audioDecoderBytes[0];
+                        //match first byte
+                        switch (audioCoderType) {
+                            case 0x02:
+                                log.debug("Audio type AAC LC");
+                            case 0x11: //ER (Error Resilient) AAC LC
+                                log.debug("Audio type ER AAC LC");
+                            default:
+                                audioCodecType = 1; //AAC LC
+                                break;
+                            case 0x01:
+                                log.debug("Audio type AAC Main");
+                                audioCodecType = 0; //AAC Main
+                                break;
+                            case 0x03:
+                                log.debug("Audio type AAC SBR");
+                                audioCodecType = 2; //AAC LC SBR
+                                break;
+                            case 0x05:
+                            case 0x1d:
+                                log.debug("Audio type AAC HE");
+                                audioCodecType = 3; //AAC HE
+                                break;
+                            case 0x20:
+                            case 0x21:
+                            case 0x22:
+                                log.debug("Audio type MP3");
+                                audioCodecType = 33; //MP3
+                                audioCodecId = "mp3";
+                                break;
+                        }
+                        log.debug("Audio coder type: {} {} id: {}", new Object[] { audioCoderType, Integer.toBinaryString(audioCoderType), audioCodecId });
+                    } else {
+                        log.debug("Audio specific config was not found");
+                        DecoderSpecificInfo info = configDescriptor.getDecoderSpecificInfo();
+                        if (info != null) {
+                            log.debug("Decoder info found: {}", info.getTag());
+                            // qcelp == 5
+                        }
+                    }
+                } else {
+                    log.debug("No ES descriptor found");
+                }
+            }
+        } else {
+            log.debug("Audio sample entry had no descriptor");
+        }
+        //stsc - has Records
+        SampleToChunkBox stsc = stbl.getSampleToChunkBox(); // stsc
+        if (stsc != null) {
+            log.debug("Sample to chunk atom found");
+            audioSamplesToChunks = stsc.getEntries();
+            log.debug("Audio samples to chunks: {}", audioSamplesToChunks.size());
+            // handle instance where there are no actual records (bad f4v?)
+        }
+        //stsz - has Samples
+        SampleSizeBox stsz = stbl.getSampleSizeBox(); // stsz
+        if (stsz != null) {
+            log.debug("Sample size atom found");
+            audioSamples = stsz.getSampleSizes();
+            log.debug("Samples: {}", audioSamples.length);
+            // if sample size is 0 then the table must be checked due to variable sample sizes
+            audioSampleSize = stsz.getSampleSize();
+            log.debug("Sample size: {}", audioSampleSize);
+            long audioSampleCount = stsz.getSampleCount();
+            log.debug("Sample count: {}", audioSampleCount);
+        }
+        //stco - has Chunks
+        ChunkOffsetBox stco = stbl.getChunkOffsetBox(); // stco / co64
+        if (stco != null) {
+            log.debug("Chunk offset atom found");
+            audioChunkOffsets = stco.getChunkOffsets();
+            log.debug("Chunk count: {}", audioChunkOffsets.length);
+        } else {
+            //co64 - has Chunks
+            ChunkOffset64BitBox co64 = stbl.getBoxes(ChunkOffset64BitBox.class).get(0);
+            if (co64 != null) {
+                log.debug("Chunk offset (64) atom found");
+                audioChunkOffsets = co64.getChunkOffsets();
+                log.debug("Chunk count: {}", audioChunkOffsets.length);
+            }
+        }
+        //stts - has TimeSampleRecords
+        TimeToSampleBox stts = stbl.getTimeToSampleBox(); // stts
+        if (stts != null) {
+            log.debug("Time to sample atom found");
+            List<TimeToSampleBox.Entry> records = stts.getEntries();
+            log.debug("Audio time to samples: {}", records.size());
+            // handle instance where there are no actual records (bad f4v?)
+            if (records.size() > 0) {
+                TimeToSampleBox.Entry rec = records.get(0);
+                log.debug("Samples = {} delta = {}", rec.getCount(), rec.getDelta());
+                //if we have 1 record it means all samples have the same duration
+                audioSampleDuration = rec.getDelta();
+            }
+        }
+        // sdtp - sample dependency type
+        SampleDependencyTypeBox sdtp = stbl.getSampleDependencyTypeBox(); // sdtp
+        if (sdtp != null) {
+            log.debug("Independent and disposable samples atom found");
+            List<SampleDependencyTypeBox.Entry> recs = sdtp.getEntries();
+            for (SampleDependencyTypeBox.Entry rec : recs) {
+                log.debug("{}", rec);
+            }
+        }
+    }
 
     @Override
     public long getTotalBytes() {
