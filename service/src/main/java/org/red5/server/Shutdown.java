@@ -42,6 +42,7 @@ public class Shutdown {
         String token = getToken(args);
         connectAndSendShutdown(port, token); 
     }
+    
     public static int parsePort(String[] args){
         if (args.length == 0) {
             System.err.println("No port specified, using default: " + DEFAULT_PORT);

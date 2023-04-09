@@ -44,15 +44,30 @@ public final class ChildFirstClassLoader extends URLClassLoader {
         dumpClassLoaderNames();
     }
 
-    private void dumpClassLoaderNames() {
-        System.out.printf("[ChildFirstClassLoader] Classloaders:\nSystem %s\nParents Parent %s\nParent %s\nThis class %s\nTCL %s\n\n", system, parentParent, this.parent, ChildFirstClassLoader.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
-    }
+
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         return loadClass(name, false);
     }
 
+
+    /**
+     * Override the parent-first resource loading model established by java.lang.Classloader with child-first behavior.
+     *
+     * @param name the name of the resource to load, should not be null
+     * @return a {@link URL} for the resource, or null if it could not be found
+     */
+    @Override
+    public URL getResource(String name) {
+        URL url = findResource(name);
+        // If local search failed, delegate to parent
+        if (url == null) {
+            url = this.parent.getResource(name);
+        }
+        return url;
+    }
+    
     /**
      * We override the parent-first behavior established by java.lang.Classloader.
      * <p>
@@ -117,19 +132,9 @@ public final class ChildFirstClassLoader extends URLClassLoader {
         return c;
     }
 
-    /**
-     * Override the parent-first resource loading model established by java.lang.Classloader with child-first behavior.
-     *
-     * @param name the name of the resource to load, should not be null
-     * @return a {@link URL} for the resource, or null if it could not be found
-     */
-    @Override
-    public URL getResource(String name) {
-        URL url = findResource(name);
-        // If local search failed, delegate to parent
-        if (url == null) {
-            url = this.parent.getResource(name);
-        }
-        return url;
+    
+
+    private void dumpClassLoaderNames() {
+        System.out.printf("[ChildFirstClassLoader] Classloaders:\nSystem %s\nParents Parent %s\nParent %s\nThis class %s\nTCL %s\n\n", system, parentParent, this.parent, ChildFirstClassLoader.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
     }
 }

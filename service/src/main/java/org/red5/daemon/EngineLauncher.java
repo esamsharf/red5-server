@@ -124,21 +124,7 @@ public class EngineLauncher implements Daemon {
         System.out.println("Daemon destroy");
     }
 
-    /**
-     * Do the work of starting the engine
-     */
-    private void initialize() {
-        if (!stopped.get()) {
-            System.out.printf("Starting Red5 with args: %s%n", Arrays.toString(commandLineArgs));
-            // start
-            try {
-                Bootstrap.main(commandLineArgs);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    
     /**
      * Cleanly stop the engine.
      */
@@ -173,4 +159,20 @@ public class EngineLauncher implements Daemon {
             System.out.println("Red5 stopped");
         }
     }
+
+    /**
+     * Do the work of starting the engine
+     */
+    private void initialize() {
+        if (!stopped.get()) {
+            System.out.printf("Starting Red5 with args: %s%n", Arrays.toString(commandLineArgs));
+            // start
+            try {
+                Bootstrap.main(commandLineArgs);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
