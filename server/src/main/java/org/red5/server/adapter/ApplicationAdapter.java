@@ -31,17 +31,17 @@ public class ApplicationAdapter extends MultiThreadedApplicationAdapter {
 
 
     private static final int TIME_OUT = 1;
-    private final Semaphore lock = new Semaphore(TIME_OUT, true);
+    private final Semaphore lock = new Semaphore(TIME_OUT, true); 
 
     /** {@inheritDoc} */
     @Override
     public boolean start(IScope scope) {
         try {
-            lock.tryAcquire(1, TimeUnit.SECONDS);
+            lock.acquire();
             return super.start(scope);
-        } catch (InterruptedException e) {
+        }catch(InterruptedException e){
             e.printStackTrace();
-        } finally {
+        } finally{
             lock.release();
         }
         return false;
