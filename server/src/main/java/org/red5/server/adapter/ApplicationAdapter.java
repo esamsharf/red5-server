@@ -10,6 +10,8 @@ package org.red5.server.adapter;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.mina.core.RuntimeIoException;
+import org.apache.tomcat.jni.Thread;
 import org.red5.server.api.IClient;
 import org.red5.server.api.IConnection;
 import org.red5.server.api.scope.IScope;
@@ -27,14 +29,13 @@ import org.red5.server.api.scope.IScope;
  */
 public class ApplicationAdapter extends MultiThreadedApplicationAdapter {
 
-    private Semaphore lock;
+
+    private static final int TIME_OUT = 1;
+    private final Semaphore lock = new Semaphore(TIME_OUT, true);
 
     /** {@inheritDoc} */
     @Override
     public boolean start(IScope scope) {
-        if (lock == null) {
-            lock = new Semaphore(1, true);
-        }
         try {
             lock.tryAcquire(1, TimeUnit.SECONDS);
             return super.start(scope);
@@ -45,6 +46,7 @@ public class ApplicationAdapter extends MultiThreadedApplicationAdapter {
         }
         return false;
     }
+    
 
     /** {@inheritDoc} */
     @Override
@@ -63,7 +65,7 @@ public class ApplicationAdapter extends MultiThreadedApplicationAdapter {
     @Override
     public boolean connect(IConnection conn, IScope scope, Object[] params) {
         try {
-            lock.tryAcquire(1, TimeUnit.SECONDS);
+            lock.acquire();
             return super.connect(conn, scope, params);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -77,7 +79,7 @@ public class ApplicationAdapter extends MultiThreadedApplicationAdapter {
     @Override
     public void disconnect(IConnection conn, IScope scope) {
         try {
-            lock.tryAcquire(1, TimeUnit.SECONDS);
+            lock.acquire();
             super.disconnect(conn, scope);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -90,7 +92,7 @@ public class ApplicationAdapter extends MultiThreadedApplicationAdapter {
     @Override
     public boolean join(IClient client, IScope scope) {
         try {
-            lock.tryAcquire(1, TimeUnit.SECONDS);
+            lock.acquire();
             return super.join(client, scope);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -104,7 +106,7 @@ public class ApplicationAdapter extends MultiThreadedApplicationAdapter {
     @Override
     public void leave(IClient client, IScope scope) {
         try {
-            lock.tryAcquire(1, TimeUnit.SECONDS);
+            lock.acquire();
             super.leave(client, scope);
         } catch (InterruptedException e) {
             e.printStackTrace();
