@@ -20,6 +20,10 @@ import org.red5.server.net.rtmp.status.StatusCodes;
 public class RTMPTClientTest extends RTMPTClient {
 
     private static boolean finished = false;
+    private static final int LIVE_BUFFER_DURATION_MS = 500;
+    private static final int VOD_BUFFER_DURATION_MS = 4000;
+    private static final int PLAY_OFFSET_LIVE = -1;
+    private static final int PLAY_OFFSET_VOD = 0;
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -110,10 +114,7 @@ public class RTMPTClientTest extends RTMPTClient {
         }
     };
 
-    private static final int LIVE_BUFFER_DURATION_MS = 500;
-    private static final int VOD_BUFFER_DURATION_MS = 4000;
-    private static final int PLAY_OFFSET_LIVE = -1;
-    private static final int PLAY_OFFSET_VOD = 0;
+  
     private IPendingServiceCallback createStreamCallback = new IPendingServiceCallback() {
         @Override
         public void resultReceived(IPendingServiceCall call) {
