@@ -68,6 +68,8 @@ public class StreamingProxy implements IPushableConsumer, IPipeConnectionListene
 
     private final Semaphore lock = new Semaphore(1, true);
 
+    private static final int DELAY = 2000;
+
     // task timer
     private static Timer timer;
 
@@ -181,6 +183,7 @@ public class StreamingProxy implements IPushableConsumer, IPipeConnectionListene
             setState(StreamState.UNPUBLISHED);
         }
     }
+    
 
     @Override
     public void resultReceived(IPendingServiceCall call) {
@@ -188,7 +191,7 @@ public class StreamingProxy implements IPushableConsumer, IPipeConnectionListene
         log.debug("resultReceived: {}", method);
         if ("connect".equals(method)) {
             //rtmpClient.releaseStream(this, new Object[] { publishName });
-            timer.schedule(new BandwidthStatusTask(), 2000L);
+            timer.schedule(new BandwidthStatusTask(), DELAY);
         } else if ("releaseStream".equals(method)) {
             //rtmpClient.invoke("FCPublish", new Object[] { publishName }, this);
         } else if ("createStream".equals(method)) {

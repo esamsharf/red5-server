@@ -110,17 +110,21 @@ public class RTMPTClientTest extends RTMPTClient {
         }
     };
 
+    private static final int LIVE_BUFFER_DURATION_MS = 500;
+    private static final int VOD_BUFFER_DURATION_MS = 4000;
+    private static final int PLAY_OFFSET_LIVE = -1;
+    private static final int PLAY_OFFSET_VOD = 0;
     private IPendingServiceCallback createStreamCallback = new IPendingServiceCallback() {
         @Override
         public void resultReceived(IPendingServiceCall call) {
             int streamId = (Integer) call.getResult();
             // live buffer 0.5s / vod buffer 4s
             if (Boolean.valueOf(PropertiesReader.getProperty("rtmpt.live"))) {
-                conn.ping(new Ping(Ping.CLIENT_BUFFER, streamId, 500));
-                play(streamId, PropertiesReader.getProperty("rtmpt.name"), -1, -1);
+                conn.ping(new Ping(Ping.CLIENT_BUFFER, streamId, LIVE_BUFFER_DURATION_MS));
+                play(streamId, PropertiesReader.getProperty("rtmpt.name"), PLAY_OFFSET_LIVE, PLAY_OFFSET_VOD);
             } else {
-                conn.ping(new Ping(Ping.CLIENT_BUFFER, streamId, 4000));
-                play(streamId, PropertiesReader.getProperty("rtmpt.name"), 0, -1);
+                conn.ping(new Ping(Ping.CLIENT_BUFFER, streamId, VOD_BUFFER_DURATION_MS));
+                play(streamId, PropertiesReader.getProperty("rtmpt.name"),PLAY_OFFSET_VOD, PLAY_OFFSET_LIVE);
             }
         }
     };

@@ -102,10 +102,11 @@ public abstract class BaseRTMPTConnection extends RTMPConnection {
      * RTMP events handler
      */
     private volatile IRTMPHandler handler;
+    private static final int CAPACITY = 2024;
 
     public BaseRTMPTConnection(String type) {
         super(type);
-        this.buffer = IoBuffer.allocate(2048);
+        this.buffer = IoBuffer.allocate(CAPACITY);
         this.buffer.setAutoExpand(true);
     }
 
@@ -254,7 +255,7 @@ public abstract class BaseRTMPTConnection extends RTMPConnection {
         if (pendingMessages.isEmpty()) {
             return null;
         }
-        IoBuffer result = IoBuffer.allocate(2048);
+        IoBuffer result = IoBuffer.allocate(CAPACITY);
         result.setAutoExpand(true);
         // We'll have to create a copy here to avoid endless recursion
         List<Packet> toNotify = new LinkedList<Packet>();

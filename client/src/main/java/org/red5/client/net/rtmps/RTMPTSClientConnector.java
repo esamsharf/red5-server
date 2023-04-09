@@ -37,6 +37,8 @@ public class RTMPTSClientConnector extends RTMPTClientConnector {
 
     private static final Logger log = LoggerFactory.getLogger(RTMPTSClientConnector.class);
 
+    private static final int SLEEP_TIME  = 250;
+
     {
         httpClient = HttpConnectionUtil.getSecureClient();
     }
@@ -82,13 +84,13 @@ public class RTMPTSClientConnector extends RTMPTClientConnector {
                     continue;
                 }
                 if (data.limit() > 0) {
-                    data.skip(1); // XXX: polling interval lies in this byte
+                    data.skip(1); 
+
                 }
                 List<?> messages = conn.decode(data);
                 if (messages == null || messages.isEmpty()) {
                     try {
-                        // XXX handle polling delay
-                        Thread.sleep(250);
+                        Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
                         if (stopRequested) {
                             post.abort();
