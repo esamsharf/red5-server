@@ -36,6 +36,7 @@ public class RTMPClient extends BaseRTMPClientHandler {
     private static final Logger log = LoggerFactory.getLogger(RTMPClient.class);
 
     protected static final int CONNECTOR_WORKER_TIMEOUT = 7000; // milliseconds
+    protected static final int TIME_OUT = 1000;
 
     // I/O handler
     protected final RTMPMinaIoHandler ioHandler;
@@ -102,7 +103,7 @@ public class RTMPClient extends BaseRTMPClientHandler {
                     // close, now
                     CloseFuture closeFuture = session.closeNow();
                     // now wait for the close to be completed
-                    if (closeFuture.await(1000, TimeUnit.MILLISECONDS)) {
+                    if (closeFuture.await(TIME_OUT, TimeUnit.MILLISECONDS)) {
                         if (!future.isCanceled()) {
                             if (future.cancel()) {
                                 log.debug("Connect future cancelled after close future");

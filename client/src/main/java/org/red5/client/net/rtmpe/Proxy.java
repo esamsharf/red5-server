@@ -73,6 +73,8 @@ public class Proxy implements IClientListener {
 
     // whether or not to use the FMLE / CDN style publish command
     private boolean useFCPublish = false;
+    private static final int INITIAL_DELAY = 1000;
+    private static final int PERIOD = 100;
 
     /**
      * Starts the process of proxying data.
@@ -83,7 +85,7 @@ public class Proxy implements IClientListener {
     public void start(String publishName, String publishMode) {
         this.publishName = publishName;
         this.publishMode = publishMode;
-        future = scheduledExecutor.scheduleAtFixedRate(new ProxyWorker(), 1000, 100, TimeUnit.MILLISECONDS);
+        future = scheduledExecutor.scheduleAtFixedRate(new ProxyWorker(), INITIAL_DELAY, PERIOD, TimeUnit.MILLISECONDS);
     }
 
     /**
