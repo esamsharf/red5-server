@@ -31,7 +31,7 @@ import org.red5.server.stream.message.RTMPMessage;
  *
  * @author Paul Gregoire (mondain@gmail.com)
  */
-public class StreamRelay {
+public class RelayStreamer {
 
     // our consumer
     private static RTMPClient client;
