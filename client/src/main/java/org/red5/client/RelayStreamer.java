@@ -33,18 +33,18 @@ import org.red5.server.stream.message.RTMPMessage;
  */
 public class RelayStreamer {
 
-    // our consumer
     private static RTMPClient client;
-
-    // our publisher
     private static StreamingProxy proxy;
-
-    // task timer
     private static Timer timer;
-
-    // the source being relayed
     private static String sourceStreamName;
+    private static final int DEFAULT_PORT = 1935;
 
+    private static final String MODE_LIVE = "live";
+    private static final String MODE_RECORD = "record";
+    private static final String MODE_APPEND = "append";
+
+    private static final int WAIT_TIME_MS = 100;
+    private static final int DELAY = 2000;
     /**
      * Creates a stream client to consume a stream from an end point and a proxy to relay the stream to another end point.
      *
@@ -59,10 +59,11 @@ public class RelayStreamer {
             // parse the args
             String sourceHost = args[0], destHost = args[3];
             String sourceApp = args[1], destApp = args[4];
-            int sourcePort = 1935, destPort = 1935;
+            int sourcePort = DEFAULT_PORT, destPort = DEFAULT_PORT;
             sourceStreamName = args[2];
             String destStreamName = args[5];
             String publishMode = args[6]; //live, record, or append
+
             // look to see if port was included in host string
             int colonIdx = sourceHost.indexOf(':');
             if (colonIdx > 0) {
@@ -102,7 +103,7 @@ public class RelayStreamer {
             // wait for the publish state
             do {
                 try {
-                    Thread.sleep(100L);
+                    Thread.sleep(WAIT_TIME_MS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -162,7 +163,7 @@ public class RelayStreamer {
                         proxy.stop();
                     } else if ("NetConnection.Connect.Success".equals(code)) {
                         // 1. Wait for onBWDone
-                        timer.schedule(new BandwidthStatusTask(), 2000L);
+                        timer.schedule(new BandwidthStatusTask(),DELAY);
                     } else {
                         System.out.printf("Unhandled response code: %s\n", code);
                     }
