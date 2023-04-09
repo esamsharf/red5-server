@@ -38,6 +38,12 @@ public class OutboundHandshake extends RTMPHandshake {
 
     private int digestPosServer;
 
+    private static final byte CLIENT_HANDSHAKE_TYPE = 0x03;
+    // private static final int CLIENT_HANDSHAKE_DATA_SIZE = 1536;
+    private static final int CLIENT_HANDSHAKE_TIME = 5;
+    private static final byte CLIENT_HANDSHAKE_FP9_VERSION = (byte)0x80;
+    private static final byte CLIENT_HANDSHAKE_FP9_VERSION2 = 0x07;
+    private static final byte CLIENT_HANDSHAKE_FP9_VERSION3 = 0x02;
     // client initial request C1
     private byte[] c1 = null;
 
@@ -104,17 +110,17 @@ public class OutboundHandshake extends RTMPHandshake {
             //fp9Handshake = false;
         }
         // timestamp
-        int time = 5;
+        int time = CLIENT_HANDSHAKE_TIME;
         handshakeBytes[0] = (byte) (time >>> 24);
         handshakeBytes[1] = (byte) (time >>> 16);
         handshakeBytes[2] = (byte) (time >>> 8);
         handshakeBytes[3] = (byte) time;
         if (fp9Handshake) {
             // flash player version > 9.0.115.0
-            handshakeBytes[4] = (byte) 0x80;
-            handshakeBytes[5] = 0;
-            handshakeBytes[6] = 7;
-            handshakeBytes[7] = 2;
+            handshakeBytes[4] = CLIENT_HANDSHAKE_FP9_VERSION;
+            handshakeBytes[5] = CLIENT_HANDSHAKE_TYPE;
+            handshakeBytes[6] = CLIENT_HANDSHAKE_FP9_VERSION2;
+            handshakeBytes[7] = CLIENT_HANDSHAKE_FP9_VERSION3;
         } else {
             log.debug("Using pre-version 9.0.115.0 handshake");
             handshakeBytes[4] = 0;
