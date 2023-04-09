@@ -38,10 +38,9 @@ public class Shutdown {
      */
     public static void main(String[] args) {
         // check for port
-        if (args.length == 0) {
-            System.err.println("No port specified, using default: " + DEFAULT_PORT);
-            args = new String[] { String.valueOf(DEFAULT_PORT) };
-        }
+        int port = parsePort(args);
+
+        // check for host
         String host = System.getProperty("red5.shutdown.host", "127.0.0.1");
         try (Socket clientSocket = new Socket(host, Integer.valueOf(args[0])); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));) {
             System.out.printf("Connected - local: %s remote: %s%n", clientSocket.getLocalSocketAddress().toString(), clientSocket.getRemoteSocketAddress().toString());
@@ -69,5 +68,13 @@ public class Shutdown {
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    public static int parsePort(String[] args){
+        if (args.length == 0) {
+            System.err.println("No port specified, using default: " + DEFAULT_PORT);
+            args = new String[] { String.valueOf(DEFAULT_PORT) };
+        }
+        return Integer.valueOf(args[0]);
     }
 }
