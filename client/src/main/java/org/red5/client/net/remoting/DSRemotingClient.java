@@ -54,6 +54,9 @@ public class DSRemotingClient extends RemotingClient {
 
     private static final String DEFAULT_DS_OPERATION = "my-operation";
 
+    private static final int BUFFER_SIZE = 1024;
+    private static final short PROTOCOL_VERSION = 3;
+
     /** The datasource id (assigned by the server). DsId */
     private String dataSourceId = "nil";
 
@@ -97,10 +100,10 @@ public class DSRemotingClient extends RemotingClient {
      */
     private IoBuffer encodeInvoke(String method, Object[] params) {
         log.debug("RemotingClient encodeInvoke - method: {} params: {}", method, params);
-        IoBuffer result = IoBuffer.allocate(1024);
+        IoBuffer result = IoBuffer.allocate(BUFFER_SIZE);
         result.setAutoExpand(true);
         //force version 3
-        result.putShort((short) 3);
+        result.putShort(PROTOCOL_VERSION);
         // Headers
         Collection<RemotingHeader> hdr = headers.values();
         result.putShort((short) hdr.size());
@@ -108,7 +111,7 @@ public class DSRemotingClient extends RemotingClient {
             Output.putString(result, header.getName());
             result.put(header.getMustUnderstand() ? (byte) 0x01 : (byte) 0x00);
 
-            IoBuffer tmp = IoBuffer.allocate(1024);
+            IoBuffer tmp = IoBuffer.allocate(BUFFER_SIZE);
             tmp.setAutoExpand(true);
             Output tmpOut = new Output(tmp);
             Serializer.serialize(tmpOut, header.getValue());
@@ -129,7 +132,7 @@ public class DSRemotingClient extends RemotingClient {
         //responseURI
         Output.putString(result, "/" + sequenceCounter++);
         // Serialize parameters
-        IoBuffer tmp = IoBuffer.allocate(1024);
+        IoBuffer tmp = IoBuffer.allocate(BUFFER_SIZE);
         tmp.setAutoExpand(true);
         Output tmpOut = new Output(tmp);
         //if the params are null send the NULL AMF type

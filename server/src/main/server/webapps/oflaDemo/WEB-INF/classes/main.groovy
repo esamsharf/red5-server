@@ -14,28 +14,28 @@ import org.red5.server.api.stream.support.StreamUtils
  *
  * @author Paul Gregoire
  */
-public class Application extends ApplicationAdapter {
+class Application extends ApplicationAdapter {
 	def appScope
 	def serverStream
 
-	public Application() {
+    Application() {
 		println "Groovy ctor"
 	}
 
-	public void main(s) {
+    void main(s) {
 		println "Groovy main"
 		appStart(null)
 		appConnect(null, null)
 		toString()
 	}
 
-	public boolean appStart(app) {
+    boolean appStart(app) {
 		println "Groovy appStart"
 		appScope = app
 		return true
 	}
 
-	public boolean appConnect(conn, params) {
+    boolean appConnect(conn, params) {
 		println "Groovy appConnect"
 		measureBandwidth(conn)
 		if (conn instanceof IStreamCapableConnection)  {
@@ -49,15 +49,15 @@ public class Application extends ApplicationAdapter {
 		return super.appConnect(conn, params)
 	}
 
-	public void appDisconnect(conn) {
+    void appDisconnect(conn) {
 		println "Groovy appDisconnect"
 		if (appScope == conn.scope && serverStream != null)  {
 			serverStream.close
 		}
 		super.appDisconnect(conn)
 	}
-	
-	public void toString() {
+
+    void toString() {
 		println "Groovy toString"
 	}	
 	

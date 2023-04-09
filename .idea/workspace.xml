@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_INJECTED_CODE" value="false" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="266ca0cd-b366-4d5e-b93a-f7f508642760" name="Changes" comment="add the modifications">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/org/red5/client/PublishModes.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/org/red5/client/PublishModes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/org/red5/client/Red5Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/org/red5/client/Red5Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/org/red5/client/RelayStreamer.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/org/red5/client/RelayStreamer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/server/conf/access.properties" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/server/conf/access.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/server/conf/password.properties" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/server/conf/password.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/server/conf/realm.properties" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/server/conf/realm.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/server/webapps/oflaDemo/WEB-INF/classes/main.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/server/webapps/oflaDemo/WEB-INF/classes/main.groovy" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,21 +42,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/esamsharfeldin/UnivLille/L3S6/GL/red5-server&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;df0cfed1f0a964f6b0d4156ca0697289&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/esamsharfeldin/UnivLille/L3S6/GL/red5-server",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "spring.configuration.checksum": "df0cfed1f0a964f6b0d4156ca0697289",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="JUnit.All in red5-parent (1)">
     <configuration name="All in red5-parent (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="red5-parent" />
@@ -89,7 +94,7 @@
       <workItem from="1678629166245" duration="3328000" />
       <workItem from="1679471168935" duration="2327000" />
       <workItem from="1680993612446" duration="882000" />
-      <workItem from="1681033723450" duration="179000" />
+      <workItem from="1681033723450" duration="830000" />
     </task>
     <task id="LOCAL-00001" summary="add the modifications">
       <created>1679473051702</created>
@@ -98,7 +103,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679473051702</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add the modifications">
+      <created>1681040292733</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1681040292733</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
