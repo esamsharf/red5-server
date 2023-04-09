@@ -23,6 +23,9 @@ import java.nio.file.Paths;
  */
 public class Shutdown {
 
+    private static final int DEFAULT_PORT = 9999;
+    private static final String DEFAULT_TOKEN = "cafebeef";
+
     /**
      * Connects to the given port (default: 9999) and invokes shutdown.
      * <ul>
@@ -34,11 +37,16 @@ public class Shutdown {
      *            see args list
      */
     public static void main(String[] args) {
+        // check for port
+        if (args.length == 0) {
+            System.err.println("No port specified, using default: " + DEFAULT_PORT);
+            args = new String[] { String.valueOf(DEFAULT_PORT) };
+        }
         String host = System.getProperty("red5.shutdown.host", "127.0.0.1");
         try (Socket clientSocket = new Socket(host, Integer.valueOf(args[0])); PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));) {
             System.out.printf("Connected - local: %s remote: %s%n", clientSocket.getLocalSocketAddress().toString(), clientSocket.getRemoteSocketAddress().toString());
             // send the token
-            String token = "cafebeef";
+            String token = DEFAULT_TOKEN;
             if (args.length > 1) {
                 token = args[1];
             } else {
