@@ -40,12 +40,8 @@ public class Shutdown {
         // check for port
         int port = parsePort(args);
         String token = getToken(args);
-        connectAndSendShutdown(port, token);
-        
-
-       
+        connectAndSendShutdown(port, token); 
     }
-
     public static int parsePort(String[] args){
         if (args.length == 0) {
             System.err.println("No port specified, using default: " + DEFAULT_PORT);
@@ -53,7 +49,6 @@ public class Shutdown {
         }
         return Integer.valueOf(args[0]);
     }
-
     private static String getToken(String[] args){
         String token = DEFAULT_TOKEN;
         if(args.length > 1){
@@ -74,7 +69,6 @@ public class Shutdown {
         }
         return token;
     }
-
     private static void connectAndSendShutdown(int port, String token){
          // check for host
          String host = System.getProperty("red5.shutdown.host", "127.0.0.1");
