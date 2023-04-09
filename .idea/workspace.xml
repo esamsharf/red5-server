@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="266ca0cd-b366-4d5e-b93a-f7f508642760" name="Changes" comment="add the modifications">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/org/red5/client/PublishModes.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/org/red5/client/PublishModes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/org/red5/client/Red5Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/org/red5/client/Red5Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/org/red5/client/RelayStreamer.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/org/red5/client/RelayStreamer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +53,30 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RunManager" selected="JUnit.All in red5-parent (1)">
+    <configuration name="All in red5-parent (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="red5-parent" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in red5-parent" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="red5-parent" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.All in red5-parent (1)" />
+        <item itemvalue="JUnit.All in red5-parent" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -62,6 +89,7 @@
       <workItem from="1678629166245" duration="3328000" />
       <workItem from="1679471168935" duration="2327000" />
       <workItem from="1680993612446" duration="882000" />
+      <workItem from="1681033723450" duration="179000" />
     </task>
     <task id="LOCAL-00001" summary="add the modifications">
       <created>1679473051702</created>

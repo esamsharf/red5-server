@@ -34,17 +34,25 @@ import org.red5.server.stream.message.RTMPMessage;
 public class RelayStreamer {
 
     private static RTMPClient client;
+
     private static StreamingProxy proxy;
+
     private static Timer timer;
+
     private static String sourceStreamName;
+
     private static final int DEFAULT_PORT = 1935;
 
     private static final String MODE_LIVE = "live";
+
     private static final String MODE_RECORD = "record";
+
     private static final String MODE_APPEND = "append";
 
     private static final int WAIT_TIME_MS = 100;
+
     private static final int DELAY = 2000;
+
     /**
      * Creates a stream client to consume a stream from an end point and a proxy to relay the stream to another end point.
      *
@@ -163,7 +171,7 @@ public class RelayStreamer {
                         proxy.stop();
                     } else if ("NetConnection.Connect.Success".equals(code)) {
                         // 1. Wait for onBWDone
-                        timer.schedule(new BandwidthStatusTask(),DELAY);
+                        timer.schedule(new BandwidthStatusTask(), DELAY);
                     } else {
                         System.out.printf("Unhandled response code: %s\n", code);
                     }

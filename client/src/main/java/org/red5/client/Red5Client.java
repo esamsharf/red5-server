@@ -36,6 +36,4 @@ public final class Red5Client {
         return CLIENT_VERSION;
     }
 
-
-
 }

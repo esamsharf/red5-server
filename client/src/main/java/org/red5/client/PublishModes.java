@@ -30,6 +30,4 @@ public final class PublishModes {
 
     public static final String APPENDWITHGAP = "appendWithGap";
 
-
-
 }
