@@ -1,7 +1,36 @@
 package org.red5.io.m4a.impl;
 import org.mp4parser.IsoFile;
+import org.mp4parser.boxes.iso14496.part12.AbstractMediaHeaderBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.mp4parser.boxes.iso14496.part12.HandlerBox;
+import org.mp4parser.boxes.iso14496.part12.MovieBox;
+import org.mp4parser.boxes.iso14496.part12.MovieHeaderBox;
+import org.mp4parser.boxes.iso14496.part12.SampleDescriptionBox;
+import org.mp4parser.boxes.iso14496.part12.SampleTableBox;
+import org.mp4parser.boxes.iso14496.part12.SoundMediaHeaderBox;
+import org.mp4parser.boxes.iso14496.part12.TrackBox;
+import org.mp4parser.boxes.iso14496.part12.TrackHeaderBox;
+import org.mp4parser.boxes.iso14496.part12.VideoMediaHeaderBox;
+import org.mp4parser.boxes.iso14496.part14.ESDescriptorBox;
+import org.red5.io.mp4.impl.MP4Reader;
+import org.mp4parser.boxes.iso14496.part12.TrackBox;
 
-public class FileHeaderReader {
+public class FileHeaderReader extends M4AReader {
+    /**
+     * Logger
+     */
+    private static Logger log = LoggerFactory.getLogger(M4AReader.class);
+
+     /**
+     * Provider of boxes
+     */
+    private IsoFile isoFile;
+
+    private long timeScale;
+    private long duration;
+    private double audioTimeScale;
+    private String formattedDuration;
     /**
      * This handles the moov atom being at the beginning or end of the file, so the mdat may also be before or after the moov atom.
      */
