@@ -45,6 +45,9 @@ public class MappingStrategy implements IMappingStrategy {
      *            Default application
      */
     public void setDefaultApp(String defaultApp) {
+        if (defaultApp == null ){
+            throw new IllegalArgumentException("Default app cannot be null");
+        }
         this.defaultApp = defaultApp;
     }
 
@@ -56,7 +59,10 @@ public class MappingStrategy implements IMappingStrategy {
      * @return Resource prefix according to this naming strategy
      */
     public String mapResourcePrefix(String path) {
-        if (path == null || path.equals(ROOT)) {
+        if (path == null ){
+            throw new IllegalArgumentException("Path cannot be null");
+        }
+        if (path.equals(ROOT)) {
             return defaultApp + DIR;
         } else {
             return path + DIR;
@@ -71,7 +77,10 @@ public class MappingStrategy implements IMappingStrategy {
      * @return Scope handler name according to this naming strategy
      */
     public String mapScopeHandlerName(String path) {
-        if (path == null || path.equals(ROOT)) {
+        if (path == null ){
+            throw new IllegalArgumentException("Path cannot be null");
+        }
+        if (path.equals(ROOT)) {
             return defaultApp + HANDLER;
         } else {
             return path + HANDLER;
@@ -86,6 +95,9 @@ public class MappingStrategy implements IMappingStrategy {
      * @return Service filename according to this naming strategy
      */
     public String mapServiceName(String name) {
+        if (name == null ){
+            throw new IllegalArgumentException("Name cannot be null");
+        }
         return name + SERVICE;
     }
 
